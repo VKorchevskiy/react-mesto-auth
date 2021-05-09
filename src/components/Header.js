@@ -5,7 +5,7 @@ import { IsLoggedInContext } from '../contexts/IsLoggedInContext';
 import { UserInfoContext } from '../contexts/UserInfoContext';
 import logo from '../images/logo.svg';
 
-function Header() {
+function Header({ onLogout }) {
   const isLoggedIn = useContext(IsLoggedInContext);
   const { _id, email } = useContext(UserInfoContext);
 
@@ -16,7 +16,7 @@ function Header() {
         <Route path="/">
           <div>
             <p className="header__text">{email}</p>
-            <Link to="sign-in" className="header__link">Выйти</Link>
+            <button className="button header__button" onClick={onLogout}>Выйти</button>
           </div>
         </Route>
       ) : (
@@ -32,7 +32,6 @@ function Header() {
           </Route>
         </Switch>
       )
-
       }
     </header>
   )

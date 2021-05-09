@@ -12,6 +12,7 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import ConfirmationPopup from './ConfirmationPopup';
 import ImagePopup from './ImagePopup';
+import InfoTooltip from './InfoTooltip';
 import { api } from '../utils/api';
 import * as authApi from '../utils/authApi'
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
@@ -22,6 +23,8 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isInfoTooltipPopupOpen, setIsInfoTooltipPopupOpen] = useState(false);
+  const [isSuccessRegisterRequest, setIsSuccessRegisterRequest] = useState(false);
   const [selectedCard, setSelectedCard] = useState({ name: null, link: null });
   const [currentUser, setCurrentUser] = useState({});
   const [userInfo, setUserInfo] = useState({
@@ -48,7 +51,9 @@ function App() {
           email: data.email,
         });
         setIsLoggedIn(true);
-      });
+      })
+      .catch(err => console.log(err));
+
   };
 
   useEffect(() => {
@@ -65,20 +70,32 @@ function App() {
     return authApi
       .authorize(data)
       .then(({ token }) => {
-        console.log(token, data)
         setUserInfo({ email: data.email });
-        console.log(userInfo)
         setIsLoggedIn(true);
         localStorage.setItem('jwt', token);
+        setIsSuccessRegisterRequest(true);
+      })
+      .catch(err => {
+        setIsSuccessRegisterRequest(false);
+        setIsInfoTooltipPopupOpen(true);
+        console.log(err)
       });
   };
 
   const onRegister = (data) => {
     return authApi
       .register(data)
-      .then((res) => {
+      .then((/* res */) => {
         // console.log(res); // {token: "..."}
         history.push('/sign-in');
+        setIsSuccessRegisterRequest(true);
+        setIsInfoTooltipPopupOpen(true);
+
+      })
+      .catch(err => {
+        setIsSuccessRegisterRequest(false);
+        setIsInfoTooltipPopupOpen(true);
+        console.log(err)
       });
   };
 
@@ -105,6 +122,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard({ name: null, link: null });
+    setIsInfoTooltipPopupOpen(false);
   }
 
   const handleEditProfileClick = () => setIsEditProfilePopupOpen(true);
@@ -159,7 +177,7 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <IsLoggedInContext.Provider value={isLoggedIn}>
         <UserInfoContext.Provider value={userInfo}>
-          <Header />
+          <Header onLogout={onLogout}/>
           <Switch>
             <Route path="/sign-in">
               <Login onLogin={onLogin} />
@@ -180,6 +198,7 @@ function App() {
               component={Main}
             />
           </Switch>
+          <InfoTooltip isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups} isSuccess={isSuccessRegisterRequest}/>
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
           <ConfirmationPopup />
