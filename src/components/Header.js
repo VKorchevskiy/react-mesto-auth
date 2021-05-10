@@ -9,7 +9,7 @@ function Header({ onLogout }) {
   const [isShowData, setIsshowData] = useState(false);
   const { email } = useContext(UserInfoContext);
 
-  const toogleIsShowData = (isShowData) => { console.log(isShowData); setIsshowData(!isShowData) };
+  const toogleIsShowData = (isShowData) => setIsshowData(!isShowData);
 
 
   return (
