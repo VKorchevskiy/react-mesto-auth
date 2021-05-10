@@ -14,10 +14,13 @@ function Header({ onLogout }) {
 
   return (
     <>
-      <div className={`header__container header__container_small-width ${isShowData ? 'header__container_active' : ''}`}>
-        <p className="header__text">{email}</p>
-        <button className="button header__button header__button_type_exit" onClick={onLogout}>Выйти</button>
-      </div>
+      {isLoggedIn
+        ? (<div className={`header__container header__container_small-width ${isShowData ? 'header__container_active' : ''}`}>
+          <p className="header__text">{email}</p>
+          <button className="button header__button header__button_type_exit" onClick={onLogout}>Выйти</button>
+        </div>)
+        : ''
+      }
       <header className="header page__header">
         <img className="logo" src={logo} alt="Логотип" />
         {isLoggedIn ? (
