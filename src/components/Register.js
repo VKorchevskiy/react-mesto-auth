@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, Redirect, Route } from 'react-router-dom';
+import { IsLoggedInContext } from '../contexts/IsLoggedInContext';
 
 function Register({ onRegister }) {
   const [registerData, setRegisterData] = useState({
@@ -7,8 +8,7 @@ function Register({ onRegister }) {
     username: '',
     password: ''
   });
-
-  const [message, setMessage] = useState('');
+  const isLoggedIn = useContext(IsLoggedInContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,8 +19,6 @@ function Register({ onRegister }) {
   };
 
   const handleSubmit = (e) => {
-    setMessage('');
-
     e.preventDefault();
     if (!registerData.email || !registerData.password) {
       return;
@@ -34,14 +32,18 @@ function Register({ onRegister }) {
     onRegister(registerData)
       .catch(err => {
         console.log(err)
-        setMessage(err.message || 'Что-то пошло не так')
       });
   };
 
 
 
   return (
-    <div className="entrance-group page__entrance-group">
+    <Route>
+      {
+        () => isLoggedIn
+        ? <Redirect to="/" />
+        : (
+          <div className="entrance-group page__entrance-group">
       <h2 className="entrance-group__title">Регистрация</h2>
 
       <form className={`form login__form`} onSubmit={handleSubmit}>
@@ -59,6 +61,10 @@ function Register({ onRegister }) {
       </form>
       <p className="entrance-group__text">Уже зарегистрированы? <Link to="/sign-in" className="entrance-group__link">Войти</Link></p>
     </div>
+        )
+      }
+    </Route>
+
   )
 }
 

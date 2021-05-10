@@ -7,7 +7,14 @@
 @import "./blocks/page/__footer/page__footer.css";
 @import "./blocks/header/header.css";
 @import "./blocks/header/__button/header__button.css";
+@import "./blocks/header/__button/_type/header__button_type_exit.css";
+@import "./blocks/header/__container/header__container.css";
+@import "./blocks/header/__container/_big-width/header__container_big-width.css";
+@import "./blocks/header/__container/_small-width/header__container_small-width.css";
+@import "./blocks/header/__container/_active/header__container_active.css";
 @import "./blocks/header/__link/header__link.css";
+@import "./blocks/header/__menu/header__menu.css";
+@import "./blocks/header/__text/header__text.css";
 @import "./blocks/logo/logo.css";
 @import "./blocks/entrance-group/entrance-group.css";
 @import "./blocks/entrance-group/__title/entrance-group__title.css";
