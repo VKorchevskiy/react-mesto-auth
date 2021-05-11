@@ -85,8 +85,7 @@ function App() {
   const onRegister = (data) => {
     return authApi
       .register(data)
-      .then((/* res */) => {
-        // console.log(res); // {token: "..."}
+      .then(() => {
         history.push('/sign-in');
         setIsSuccessRegisterRequest(true);
         setIsInfoTooltipPopupOpen(true);
@@ -105,17 +104,16 @@ function App() {
     history.push('/sign-in');
   };
 
-
-
-
   useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getInitialCards()])
-      .then(([userData, cards]) => {
-        setCurrentUser(userData);
-        setCards(cards);
-      })
-      .catch(err => console.log(err));
-  }, []);
+    if (isLoggedIn) {
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
+        .then(([userData, cards]) => {
+          setCurrentUser(userData);
+          setCards(cards);
+        })
+        .catch(err => console.log(err));
+    }
+  }, [isLoggedIn]);
 
   function closeAllPopups() {
     setIsAddPlacePopupOpen(false);
@@ -177,7 +175,7 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <IsLoggedInContext.Provider value={isLoggedIn}>
         <UserInfoContext.Provider value={userInfo}>
-          <Header onLogout={onLogout}/>
+          <Header onLogout={onLogout} />
           <Switch>
             <Route path="/sign-in">
               <Login onLogin={onLogin} />
@@ -198,7 +196,8 @@ function App() {
               component={Main}
             />
           </Switch>
-          <InfoTooltip isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups} isSuccess={isSuccessRegisterRequest}/>
+          <InfoTooltip isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups} isSuccess={isSuccessRegisterRequest}
+            infoText={isSuccessRegisterRequest ? 'Вы успешно зарегистрировались!' : 'Что-то пошло не так! Попробуйте ещё раз.'} />
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
           <ConfirmationPopup />

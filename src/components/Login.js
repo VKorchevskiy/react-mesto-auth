@@ -23,46 +23,33 @@ function Login({ onLogin }) {
       return;
     }
 
-    onLogin(loginData)
-      .catch(err => {
-        console.log(err);
-      });
+    onLogin(loginData);
   };
 
   return (
-    <Route>
-      {() => isLoggedIn
-        ? <Redirect to="/" />
-        : (
-          <div className="entrance-group page__entrance-group" >
-            <h2 className="entrance-group__title">Вход</h2>
+    <>
+      {isLoggedIn && <Redirect to="/" />}
+      <div className="entrance-group page__entrance-group" >
+        <h2 className="entrance-group__title">Вход</h2>
 
-            <form className={`form login__form`} onSubmit={handleSubmit}>
-              <input
-                className="form__input-text form__input-text_type_dark-form" type="email" name="email"
-                id="email-login" placeholder="Email" required autoComplete="email"
-                value={loginData.email} onChange={handleChange}
-              />
-              <span className="form__input-error name-profile-error"></span>
-              <input
-                className="form__input-text form__input-text_type_dark-form" type="password" name="password"
-                id="password-login" placeholder="Пароль" required minLength="2" maxLength="200" autoComplete="password"
-                value={loginData.password} onChange={handleChange}
-              />
-              <span className="form__input-error job-profile-error"></span>
-              <input className="button form__save form__save_type_dark-form" type="submit" value="Войти" />
-            </form>
-          </div >
-        )
-      }
-    </Route>
-
-
+        <form className={`form login__form`} onSubmit={handleSubmit}>
+          <input
+            className="form__input-text form__input-text_type_dark-form" type="email" name="email"
+            id="email-login" placeholder="Email" required autoComplete="email"
+            value={loginData.email} onChange={handleChange}
+          />
+          <span className="form__input-error name-profile-error"></span>
+          <input
+            className="form__input-text form__input-text_type_dark-form" type="password" name="password"
+            id="password-login" placeholder="Пароль" required minLength="2" maxLength="200" autoComplete="password"
+            value={loginData.password} onChange={handleChange}
+          />
+          <span className="form__input-error job-profile-error"></span>
+          <input className="button form__save form__save_type_dark-form" type="submit" value="Войти" />
+        </form>
+      </div >
+    </>
   )
-
-
-
-
 }
 
 export default Login;
