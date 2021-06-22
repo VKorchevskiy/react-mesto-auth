@@ -5,7 +5,7 @@ const formSelectors = {
   inputErrorClass: 'form__input-text_type_error',
   errorClass: 'form__input-error_active'
 }
-const baseUrl = 'api.mesto.vkorch.nomoredomains.club';
+const baseUrl = 'https://api.mesto.vkorch.nomoredomains.club';
 
 const optionsApi = {
   urlUserMe: `${baseUrl}/users/me`,
