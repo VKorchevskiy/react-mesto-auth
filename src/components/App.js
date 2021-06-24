@@ -44,7 +44,7 @@ function App() {
 
     authApi
       .getEmail(jwt)
-      .then(({ data }) => {
+      .then((data) => {
         setUserInfo({
           ...userInfo,
           _id: data._id,
@@ -66,13 +66,24 @@ function App() {
     }
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      Promise.all([api.getUserInfo(localStorage.getItem('jwt')), api.getInitialCards(localStorage.getItem('jwt'))])
+        .then(([userData, cards]) => {
+          setCurrentUser(userData);
+          setCards(cards);
+        })
+        .catch(err => console.log(err));
+    }
+  }, [isLoggedIn]);
+
   const onLogin = (data) => {
     return authApi
       .authorize(data)
       .then(({ token }) => {
+        localStorage.setItem('jwt', token);
         setUserInfo({ email: data.email });
         setIsLoggedIn(true);
-        localStorage.setItem('jwt', token);
         setIsSuccessRegisterRequest(true);
       })
       .catch(err => {
@@ -104,17 +115,6 @@ function App() {
     history.push('/sign-in');
   };
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      Promise.all([api.getUserInfo(), api.getInitialCards()])
-        .then(([userData, cards]) => {
-          setCurrentUser(userData);
-          setCards(cards);
-        })
-        .catch(err => console.log(err));
-    }
-  }, [isLoggedIn]);
-
   function closeAllPopups() {
     setIsAddPlacePopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -129,8 +129,8 @@ function App() {
   const handleCardClick = ({ name, link }) => setSelectedCard({ name, link });
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some(like => like._id === currentUser._id);
-    api.changeLikeCardStatus(card._id, !isLiked)
+    const isLiked = card.likes.some(like => like === currentUser._id);
+    api.changeLikeCardStatus(card._id, !isLiked, localStorage.getItem('jwt'))
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
       })
@@ -138,7 +138,7 @@ function App() {
   }
 
   function handleCardDelete(card) {
-    api.deleteCard(card._id)
+    api.deleteCard(card._id, localStorage.getItem('jwt'))
       .then(() => {
         setCards((state) => state.filter((c) => c._id !== card._id))
       })
@@ -146,7 +146,7 @@ function App() {
   }
 
   function handleAddPlaceSubmit({ name, link }) {
-    return api.setCard({ name, link })
+    return api.setCard({ name, link }, localStorage.getItem('jwt'))
       .then(newCard => {
         setCards([newCard, ...cards]);
         closeAllPopups();
@@ -154,7 +154,7 @@ function App() {
   }
 
   function handleUpdateUser({ name, about }) {
-    api.setUserInfo({ name, about })
+    api.setUserInfo({ name, about }, localStorage.getItem('jwt'))
       .then((userData) => {
         setCurrentUser(userData);
         closeAllPopups();
@@ -163,7 +163,7 @@ function App() {
   }
 
   function handleUpdateAvatar({ avatar }) {
-    api.setAvatar({ avatar })
+    api.setAvatar({ avatar }, localStorage.getItem('jwt'))
       .then((userData) => {
         setCurrentUser(userData);
         closeAllPopups();

@@ -1,12 +1,12 @@
-import {optionsApi} from './constant';
+import { optionsApi, headers } from './constant';
 
 class Api {
-  constructor(config) {
+  constructor(config, headers) {
     this._urlUserMe = config.urlUserMe;
     this._urlCards = config.urlCards;
     this._urlCardsLikes = config.urlCardsLikes;
     this._urlUserMeAvatar = config.urlUserMeAvatar;
-    this._headers = config.headers;
+    this._headers = headers;
   }
 
   /**
@@ -21,13 +21,20 @@ class Api {
     return Promise.reject(new Error(`Ошибка: ${res.status}`));
   }
 
+  _getAuthHeaders(token) {
+    return {
+      ...this._headers,
+      'Authorization': `Bearer ${token}`,
+    }
+  }
+
   /**
    * Берёт данные пользователя с сервера
    * @returns {*} Данные пользователя или ошибку
    */
-  getUserInfo() {
+  getUserInfo(token) {
     return fetch(this._urlUserMe, {
-      headers: this._headers,
+      headers: this._getAuthHeaders(token),
     })
       .then(this._checkServerResponse);
   }
@@ -36,9 +43,9 @@ class Api {
    * Берёт массива карточек с сервера, для первичной инициализации страницы
    * @returns {Array} массив карточек или ошибку
    */
-  getInitialCards() {
+  getInitialCards(token) {
     return fetch(this._urlCards, {
-      headers: this._headers,
+      headers: this._getAuthHeaders(token),
     })
       .then(this._checkServerResponse);
   }
@@ -47,10 +54,10 @@ class Api {
    * Обновляет информацию пользователя
    * @param {name, about} param0 name - имя пользователя, about - описание пользователя.
    */
-  setUserInfo({ name, about }) {
+  setUserInfo({ name, about }, token) {
     return fetch(this._urlUserMe, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: this._getAuthHeaders(token),
       body: JSON.stringify({
         name: name,
         about: about,
@@ -64,10 +71,10 @@ class Api {
    * @param {name, link} name - название карточки, link - ссылка на картинку.
    * @returns карточку или ошибку
    */
-  setCard({ name, link }) {
+  setCard({ name, link }, token) {
     return fetch(this._urlCards, {
       method: 'POST',
-      headers: this._headers,
+      headers: this._getAuthHeaders(token),
       body: JSON.stringify({
         name: name,
         link: link,
@@ -81,10 +88,10 @@ class Api {
    * @param {*} id - id карточки
    * @returns карточку или ошибку
    */
-  deleteCard(id) {
+  deleteCard(id, token) {
     return fetch((`${this._urlCards}/${id}`), {
       method: 'DELETE',
-      headers: this._headers,
+      headers: this._getAuthHeaders(token),
     })
       .then(this._checkServerResponse);
   }
@@ -94,10 +101,10 @@ class Api {
    * @param {*} id - id карточки
    * @returns лайки или ошибку
    */
-  putLike(id) {
+  putLike(id, token) {
     return fetch((`${this._urlCardsLikes}/${id}`), {
       method: 'PUT',
-      headers: this._headers,
+      headers: this._getAuthHeaders(token),
     })
       .then(this._checkServerResponse);
   }
@@ -107,16 +114,16 @@ class Api {
    * @param {*} id - id номер карточки
    * @returns карточку или ошибку
    */
-  deleteLike(id) {
+  deleteLike(id, token) {
     return fetch((`${this._urlCardsLikes}/${id}`), {
       method: 'DELETE',
-      headers: this._headers,
+      headers: this._getAuthHeaders(token),
     })
       .then(this._checkServerResponse);
   }
 
-  changeLikeCardStatus(id, isLiked) {
-    return isLiked ? this.putLike(id) : this.deleteLike(id);
+  changeLikeCardStatus(id, isLiked, token) {
+    return isLiked ? this.putLike(id, token) : this.deleteLike(id, token);
   }
 
   /**
@@ -124,10 +131,10 @@ class Api {
    * @param {avatar} avatar- аватар
    * @returns аватар или ошибку
    */
-  setAvatar({ avatar }) {
+  setAvatar({ avatar }, token) {
     return fetch(this._urlUserMeAvatar, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: this._getAuthHeaders(token),
       body: JSON.stringify({
         avatar: avatar,
       }),
@@ -136,4 +143,4 @@ class Api {
   }
 }
 
-export const api = new Api(optionsApi);
+export const api = new Api(optionsApi, headers);
