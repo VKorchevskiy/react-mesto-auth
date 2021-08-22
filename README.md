@@ -5,9 +5,9 @@
     <img alt="Made by: VKorchevskiy" src="https://img.shields.io/badge/Made%20by-VKorchevskiy-informational?style=for-the-badge&logo=appveyor" />
     <img alt="Stars *" src="https://img.shields.io/github/stars/VKorchevskiy/react-mesto-auth?style=for-the-badge&logo=appveyor&color=informational" />
     <img alt="Code Size" src="https://img.shields.io/github/languages/code-size/VKorchevskiy/react-mesto-auth?style=for-the-badge&logo=appveyor&color=informational">
-
+</p>
   
-  # проект Mesto на Реакте с авторизацией и регистрацией
+  # Проект Mesto на Реакте с авторизацией и регистрацией
 
 Использованы предыдущие наработки по проекту Mesto.
 
